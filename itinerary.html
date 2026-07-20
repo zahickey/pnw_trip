@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Itinerary — San Diego → Alaska</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#EDE7D6;
+    --ink:#22301F;
+    --forest-dark:#1F3324;
+    --rust:#C1502E;
+    --teal:#3B6E7E;
+    --grey:#8A8272;
+    --card-bg:#FBF8EF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;font-family:'Source Serif 4', serif;background:var(--parchment);color:var(--ink);}
+
+  header{
+    height:88px; background:var(--forest-dark); color:var(--parchment);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px; border-bottom:3px solid var(--rust);
+  }
+  header .title-block h1{
+    font-family:'Oswald', sans-serif; font-weight:700; font-size:22px;
+    letter-spacing:0.03em; text-transform:uppercase; margin:0; line-height:1.15;
+  }
+  header .title-block p{
+    margin:2px 0 0 0; font-size:13px; color:#C9C2A8;
+    font-family:'Source Serif 4', serif; font-style:italic;
+  }
+  nav.tabs{ display:flex; gap:6px; }
+  nav.tabs a{
+    font-family:'Oswald', sans-serif; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    color:#C9C2A8; text-decoration:none; padding:8px 14px; border-radius:4px 4px 0 0;
+  }
+  nav.tabs a.active{ background:var(--parchment); color:var(--forest-dark); font-weight:600; }
+  nav.tabs a:not(.active):hover{ background:rgba(255,255,255,0.08); color:var(--parchment); }
+
+  main{ max-width:1100px; margin:0 auto; padding:28px 24px 60px; }
+
+  table{ width:100%; border-collapse:collapse; background:var(--card-bg); box-shadow:0 3px 14px rgba(0,0,0,0.12); border-radius:6px; overflow:hidden; }
+  thead th{
+    font-family:'Oswald', sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    background:var(--forest-dark); color:var(--parchment); text-align:left; padding:12px 14px;
+  }
+  tbody td{ padding:14px; font-size:14.5px; vertical-align:top; border-bottom:1px solid #E3DBC2; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:nth-child(even){ background:#F4EFDD; }
+  td.stop-name{ font-family:'Oswald', sans-serif; font-weight:600; color:var(--forest-dark); white-space:nowrap; }
+  td.stop-name .idx{ color:var(--rust); margin-right:6px; }
+  td.stat{ font-family:'Oswald', sans-serif; font-size:13px; color:var(--teal); font-weight:600; white-space:nowrap; }
+  td.activities ul{ margin:0; padding-left:18px; }
+  td.activities li{ margin-bottom:3px; }
+  .end-tag{ color:var(--grey); font-style:italic; font-family:'Source Serif 4', serif; font-weight:normal; }
+
+  @media (max-width:800px){
+    table, thead, tbody, th, td, tr{ display:block; }
+    thead{ display:none; }
+    tbody tr{ background:var(--card-bg) !important; border-bottom:8px solid var(--parchment); padding:10px 0; }
+    tbody td{ border:none; padding:6px 14px; }
+    td.stat::before{ font-family:'Oswald', sans-serif; font-size:10px; text-transform:uppercase; color:var(--grey); display:block; }
+    td.stat.time::before{ content:"Time to next stop"; }
+    td.stat.dist::before{ content:"Distance to next stop"; }
+    td.activities::before{ content:"Activities"; font-family:'Oswald', sans-serif; font-size:10px; text-transform:uppercase; color:var(--grey); display:block; margin-bottom:2px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <h1>San Diego → Alaska</h1>
+    <p>The long way up — Jul 20 to Aug 14, 2026</p>
+  </div>
+  <nav class="tabs">
+    <a href="index.html">Map</a>
+    <a href="itinerary.html" class="active">Itinerary</a>
+  </nav>
+</header>
+
+<main>
+  <table>
+    <thead>
+      <tr>
+        <th>Stop</th>
+        <th>Time to next stop</th>
+        <th>Distance to next stop</th>
+        <th>Activities</th>
+      </tr>
+    </thead>
+    <tbody id="itinerary-body"></tbody>
+  </table>
+</main>
+
+<script>
+const rows = [
+  { name:"San Diego, CA", time:"~2.5 hr", dist:"140 mi", activities:["Trip start — final gear check & packing", "Load the truck camper and hit the road"] },
+  { name:"Joshua Tree National Park", time:"~6 hr", dist:"320 mi", activities:["Bouldering & easy trad in Hidden Valley", "Sunset at Keys View", "Cholla Cactus Garden short walk"] },
+  { name:"Yosemite (Tuolumne Meadows)", time:"~3 hr", dist:"140 mi", activities:["Trad multi-pitch on granite domes", "Cathedral Peak", "Tenaya Lake swim", "High-country hikes"] },
+  { name:"South Lake Tahoe", time:"~1 hr", dist:"60 mi", activities:["Emerald Bay hike down to Vikingsholm", "Swim in the lake", "Easy rest day"] },
+  { name:"Reno, NV", time:"~6.5 hr", dist:"350 mi", activities:["Quick coffee & resupply stop"] },
+  { name:"Crater Lake National Park", time:"~2.5 hr", dist:"130 mi", activities:["Rim Drive scenic loop", "Cleetwood Cove Trail (if open)", "Sunset at the rim"] },
+  { name:"Bend, OR (Smith Rock)", time:"~3 hr", dist:"160 mi", activities:["Sport climbing at Smith Rock", "Misery Ridge loop trail", "Views of the Crooked River gorge"] },
+  { name:"Portland, OR", time:"~3 hr", dist:"175 mi", activities:["Food carts", "Powell's Books", "Waterfront walk"] },
+  { name:"Seattle, WA", time:"~2 hr", dist:"90 mi", activities:["Pike Place Market", "Kerry Park skyline view", "Waterfront"] },
+  { name:"Mt. Rainier National Park", time:"~3.5 hr", dist:"170 mi", activities:["Skyline Trail loop", "Paradise wildflower meadows", "Reflection Lakes"] },
+  { name:"Olympic National Park", time:"~4.5 hr", dist:"230 mi", activities:["Hurricane Ridge", "Hoh Rainforest", "Coastal beach walk"] },
+  { name:"North Cascades National Park", time:"~5 hr", dist:"230 mi", activities:["Maple Pass / Cutthroat Pass hike", "Diablo Lake overlook"] },
+  { name:"Squamish, BC", time:"~5.5 hr", dist:"300 mi", activities:["Trad multi-pitch on the Stawamus Chief", "Hike to the top of the Chief", "Sea to Sky Gondola"] },
+  { name:"Kamloops, BC", time:"~5.5 hr", dist:"300 mi", activities:["Rest & resupply — halfway point to Banff"] },
+  { name:"Banff National Park", time:"~3.5 hr", dist:"180 mi", activities:["Lake Louise", "Moraine Lake", "Johnston Canyon hike"] },
+  { name:"Jasper National Park", time:"~4.5 hr", dist:"235 mi", activities:["Icefields Parkway stops", "Athabasca Glacier", "Maligne Lake", "Wildlife watching"] },
+  { name:"Prince George, BC", time:"~4 hr", dist:"230 mi", activities:["Rest stop on the Yellowhead Highway"] },
+  { name:"Smithers, BC", time:"~4 hr", dist:"200 mi", activities:["Rest stop", "Small mountain town, good coffee"] },
+  { name:"Hyder, AK", time:"~4.5 hr", dist:"225 mi", activities:["Drive to Salmon Glacier — largest road-accessible glacier in the world", "Fish Creek: watch grizzlies fishing for salmon", "Touch Alaska with zero ferry required"] },
+  { name:"Prince Rupert, BC", time:"~6 hr", dist:"Ferry crossing", activities:["Prep for the ferry", "Walk the harbor"] },
+  { name:"Ketchikan, AK", time:null, dist:null, activities:["Misty Fjords National Monument day trip", "Creek Street", "Tongass National Forest", "Trip end — arrange the ride home"] }
+];
+
+const tbody = document.getElementById('itinerary-body');
+rows.forEach((r, idx) => {
+  const tr = document.createElement('tr');
+  const timeCell = r.time ? r.time : '<span class="end-tag">— trip end —</span>';
+  const distCell = r.dist ? r.dist : '<span class="end-tag">— trip end —</span>';
+  tr.innerHTML = `
+    <td class="stop-name"><span class="idx">${idx+1}.</span>${r.name}</td>
+    <td class="stat time">${timeCell}</td>
+    <td class="stat dist">${distCell}</td>
+    <td class="activities"><ul>${r.activities.map(a => `<li>${a}</li>`).join('')}</ul></td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>San Diego → Alaska: The Long Way Up</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
@@ -49,12 +49,22 @@
     font-family:'Source Serif 4', serif;
     font-style:italic;
   }
+  header .right-side{ display:flex; align-items:center; gap:26px; }
   header .stats{
     display:flex; gap:22px; font-family:'Oswald', sans-serif;
   }
   header .stats div{ text-align:right; }
   header .stats .num{ font-size:20px; font-weight:600; color:var(--rust); display:block; line-height:1;}
   header .stats .lbl{ font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#C9C2A8; }
+
+  nav.tabs{ display:flex; gap:6px; }
+  nav.tabs a{
+    font-family:'Oswald', sans-serif; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    color:#C9C2A8; text-decoration:none; padding:8px 14px; border-radius:4px 4px 0 0;
+    border:1px solid transparent;
+  }
+  nav.tabs a.active{ background:var(--parchment); color:var(--forest-dark); font-weight:600; }
+  nav.tabs a:not(.active):hover{ background:rgba(255,255,255,0.08); color:var(--parchment); }
 
   .legend{
     position:absolute; bottom:20px; left:20px; z-index:999;
@@ -96,9 +106,15 @@
     background:var(--card-bg);
     border-radius:6px;
     box-shadow:0 6px 20px rgba(0,0,0,0.35);
+    overflow:hidden;
   }
-  .leaflet-popup-content{ margin:16px 18px; width:260px !important; font-family:'Source Serif 4', serif; }
+  .leaflet-popup-content{ margin:0 !important; width:270px !important; font-family:'Source Serif 4', serif; }
   .leaflet-popup-tip{ background:var(--card-bg); }
+  .popup-photo{
+    width:100%; height:130px; object-fit:cover; display:block;
+    background:linear-gradient(135deg, #D8CFAF, #C9C2A8);
+  }
+  .popup-body{ padding:14px 16px; }
   .popup-eyebrow{
     font-family:'Oswald', sans-serif; font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
     color:var(--rust); margin:0 0 2px 0; font-weight:600;
@@ -123,9 +139,14 @@
   .leaflet-tooltip.stop-tooltip{
     font-family:'Oswald', sans-serif; font-weight:600; font-size:12px;
     background:var(--forest-dark); color:var(--parchment); border:none;
-    padding:4px 9px; border-radius:3px;
+    padding:6px 10px 6px 6px; border-radius:4px;
+    display:flex; align-items:center; gap:8px;
   }
   .leaflet-tooltip.stop-tooltip::before{ border-top-color:var(--forest-dark); }
+  .tooltip-thumb{
+    width:34px; height:34px; border-radius:3px; object-fit:cover; flex-shrink:0;
+    background:rgba(255,255,255,0.15);
+  }
 
   @media (max-width:640px){
     header{ padding:0 14px; }
@@ -133,6 +154,8 @@
     header .title-block p{ font-size:11px; }
     header .stats{ gap:12px; }
     header .stats .num{ font-size:16px; }
+    header .right-side{ gap:12px; }
+    nav.tabs a{ padding:6px 9px; font-size:10px; }
     .legend{ max-width:140px; padding:10px 12px; bottom:12px; left:12px;}
     .hint{ display:none; }
     #map{ top:78px; }
@@ -147,10 +170,16 @@
     <h1>San Diego → Alaska</h1>
     <p>The long way up — Jul 20 to Aug 14, 2026</p>
   </div>
-  <div class="stats">
-    <div><span class="num">21</span><span class="lbl">Stops</span></div>
-    <div><span class="num">7</span><span class="lbl">Nat'l Parks</span></div>
-    <div><span class="num">26</span><span class="lbl">Days</span></div>
+  <div class="right-side">
+    <nav class="tabs">
+      <a href="index.html" class="active">Map</a>
+      <a href="itinerary.html">Itinerary</a>
+    </nav>
+    <div class="stats">
+      <div><span class="num">21</span><span class="lbl">Stops</span></div>
+      <div><span class="num">7</span><span class="lbl">Nat'l Parks</span></div>
+      <div><span class="num">26</span><span class="lbl">Days</span></div>
+    </div>
   </div>
 </header>
 
@@ -168,131 +197,131 @@
 
 <div class="hint">Click any stop for details &middot; dashed line = ferry</div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const stops = [
   {
-    name:"San Diego, CA", lat:32.7157, lng:-117.1611, type:"city",
+    name:"San Diego, CA", lat:32.7157, lng:-117.1611, type:"city", wiki:"San_Diego",
     dates:"Jul 20", nights:0,
     from:null, to:"140 mi / ~2.5 hr",
     activities:["Trip start — final gear check & packing", "Load the truck camper and hit the road"]
   },
   {
-    name:"Joshua Tree National Park", lat:33.8734, lng:-115.9010, type:"park",
+    name:"Joshua Tree National Park", lat:33.8734, lng:-115.9010, type:"park", wiki:"Joshua_Tree_National_Park",
     dates:"Jul 20", nights:1,
     from:"140 mi / ~2.5 hr", to:"320 mi / ~6 hr",
     activities:["Bouldering & easy trad in Hidden Valley", "Sunset at Keys View", "Cholla Cactus Garden short walk"]
   },
   {
-    name:"Yosemite (Tuolumne Meadows)", lat:37.8731, lng:-119.3591, type:"park",
+    name:"Yosemite (Tuolumne Meadows)", lat:37.8731, lng:-119.3591, type:"park", wiki:"Tuolumne_Meadows",
     dates:"Jul 21–23", nights:3,
     from:"320 mi / ~6 hr", to:"140 mi / ~3 hr",
     activities:["Trad multi-pitch on granite domes", "Cathedral Peak", "Tenaya Lake swim", "High-country hikes"]
   },
   {
-    name:"South Lake Tahoe", lat:38.9399, lng:-119.9772, type:"city",
+    name:"South Lake Tahoe", lat:38.9399, lng:-119.9772, type:"city", wiki:"South_Lake_Tahoe,_California",
     dates:"Jul 24", nights:1,
     from:"140 mi / ~3 hr", to:"60 mi / ~1 hr",
     activities:["Emerald Bay hike down to Vikingsholm", "Swim in the lake", "Easy rest day"]
   },
   {
-    name:"Reno, NV", lat:39.5299, lng:-119.8143, type:"transit",
+    name:"Reno, NV", lat:39.5299, lng:-119.8143, type:"transit", wiki:"Reno,_Nevada",
     dates:"Jul 25 (morning)", nights:0,
     from:"60 mi / ~1 hr", to:"350 mi / ~6.5 hr",
     activities:["Quick coffee & resupply stop"]
   },
   {
-    name:"Crater Lake National Park", lat:42.9295, lng:-122.1279, type:"park",
+    name:"Crater Lake National Park", lat:42.9295, lng:-122.1279, type:"park", wiki:"Crater_Lake_National_Park",
     dates:"Jul 25", nights:1,
     from:"350 mi / ~6.5 hr", to:"130 mi / ~2.5 hr",
     activities:["Rim Drive scenic loop", "Cleetwood Cove Trail (if open)", "Sunset at the rim"]
   },
   {
-    name:"Bend, OR (Smith Rock)", lat:44.0582, lng:-121.3153, type:"climb",
+    name:"Bend, OR (Smith Rock)", lat:44.0582, lng:-121.3153, type:"climb", wiki:"Smith_Rock_State_Park",
     dates:"Jul 26", nights:1,
     from:"130 mi / ~2.5 hr", to:"160 mi / ~3 hr",
     activities:["Sport climbing at Smith Rock", "Misery Ridge loop trail", "Views of the Crooked River gorge"]
   },
   {
-    name:"Portland, OR", lat:45.5152, lng:-122.6784, type:"city",
+    name:"Portland, OR", lat:45.5152, lng:-122.6784, type:"city", wiki:"Portland,_Oregon",
     dates:"Jul 27", nights:1,
     from:"160 mi / ~3 hr", to:"175 mi / ~3 hr",
     activities:["Food carts", "Powell's Books", "Waterfront walk"]
   },
   {
-    name:"Seattle, WA", lat:47.6061, lng:-122.3328, type:"city",
+    name:"Seattle, WA", lat:47.6061, lng:-122.3328, type:"city", wiki:"Seattle",
     dates:"Jul 28", nights:1,
     from:"175 mi / ~3 hr", to:"90 mi / ~2 hr",
     activities:["Pike Place Market", "Kerry Park skyline view", "Waterfront"]
   },
   {
-    name:"Mt. Rainier National Park", lat:46.8671, lng:-121.6999, type:"park",
+    name:"Mt. Rainier National Park", lat:46.8671, lng:-121.6999, type:"park", wiki:"Mount_Rainier_National_Park",
     dates:"Jul 29", nights:1,
     from:"90 mi / ~2 hr", to:"170 mi / ~3.5 hr",
     activities:["Skyline Trail loop", "Paradise wildflower meadows", "Reflection Lakes"]
   },
   {
-    name:"Olympic National Park", lat:47.8021, lng:-123.6044, type:"park",
+    name:"Olympic National Park", lat:47.8021, lng:-123.6044, type:"park", wiki:"Olympic_National_Park",
     dates:"Jul 30", nights:1,
     from:"170 mi / ~3.5 hr", to:"230 mi / ~4.5 hr",
     activities:["Hurricane Ridge", "Hoh Rainforest", "Coastal beach walk"]
   },
   {
-    name:"North Cascades National Park", lat:48.7718, lng:-121.2985, type:"park",
+    name:"North Cascades National Park", lat:48.7718, lng:-121.2985, type:"park", wiki:"North_Cascades_National_Park",
     dates:"Jul 31", nights:1,
     from:"230 mi / ~4.5 hr", to:"230 mi / ~5 hr",
     activities:["Maple Pass / Cutthroat Pass hike", "Diablo Lake overlook"]
   },
   {
-    name:"Squamish, BC", lat:49.7016, lng:-123.1558, type:"climb",
+    name:"Squamish, BC", lat:49.7016, lng:-123.1558, type:"climb", wiki:"Stawamus_Chief",
     dates:"Aug 1–4", nights:4,
     from:"230 mi / ~5 hr", to:"300 mi / ~5.5 hr",
     activities:["Trad multi-pitch on the Stawamus Chief", "Hike to the top of the Chief", "Sea to Sky Gondola"]
   },
   {
-    name:"Kamloops, BC", lat:50.6745, lng:-120.3273, type:"transit",
+    name:"Kamloops, BC", lat:50.6745, lng:-120.3273, type:"transit", wiki:"Kamloops",
     dates:"Aug 5", nights:1,
     from:"300 mi / ~5.5 hr", to:"300 mi / ~5.5 hr",
     activities:["Rest & resupply — halfway point to Banff"]
   },
   {
-    name:"Banff National Park", lat:51.4968, lng:-115.9281, type:"park",
+    name:"Banff National Park", lat:51.4968, lng:-115.9281, type:"park", wiki:"Banff_National_Park",
     dates:"Aug 6", nights:1,
     from:"300 mi / ~5.5 hr", to:"180 mi / ~3.5 hr",
     activities:["Lake Louise", "Moraine Lake", "Johnston Canyon hike"]
   },
   {
-    name:"Jasper National Park", lat:52.8734, lng:-117.9543, type:"park",
+    name:"Jasper National Park", lat:52.8734, lng:-117.9543, type:"park", wiki:"Jasper_National_Park",
     dates:"Aug 7", nights:1,
     from:"180 mi / ~3.5 hr", to:"235 mi / ~4.5 hr",
     activities:["Icefields Parkway stops", "Athabasca Glacier", "Maligne Lake", "Wildlife watching"]
   },
   {
-    name:"Prince George, BC", lat:53.9171, lng:-122.7497, type:"transit",
+    name:"Prince George, BC", lat:53.9171, lng:-122.7497, type:"transit", wiki:"Prince_George,_British_Columbia",
     dates:"Aug 8", nights:1,
     from:"235 mi / ~4.5 hr", to:"230 mi / ~4 hr",
     activities:["Rest stop on the Yellowhead Highway"]
   },
   {
-    name:"Smithers, BC", lat:54.7822, lng:-127.1687, type:"transit",
+    name:"Smithers, BC", lat:54.7822, lng:-127.1687, type:"transit", wiki:"Smithers,_British_Columbia",
     dates:"Aug 9", nights:1,
     from:"230 mi / ~4 hr", to:"200 mi / ~4 hr",
     activities:["Rest stop", "Small mountain town, good coffee"]
   },
   {
-    name:"Hyder, AK", lat:55.9166, lng:-130.0201, type:"bonus",
+    name:"Hyder, AK", lat:55.9166, lng:-130.0201, type:"bonus", wiki:"Salmon_Glacier",
     dates:"Aug 10", nights:1,
     from:"200 mi / ~4 hr", to:"225 mi / ~4.5 hr",
     activities:["Drive to Salmon Glacier — largest road-accessible glacier in the world", "Fish Creek: watch grizzlies fishing for salmon", "Touch Alaska with zero ferry required"]
   },
   {
-    name:"Prince Rupert, BC", lat:54.3150, lng:-130.3208, type:"transit",
+    name:"Prince Rupert, BC", lat:54.3150, lng:-130.3208, type:"transit", wiki:"Prince_Rupert,_British_Columbia",
     dates:"Aug 11", nights:1,
     from:"225 mi / ~4.5 hr", to:"~6 hr ferry crossing",
     activities:["Prep for the ferry", "Walk the harbor"]
   },
   {
-    name:"Ketchikan, AK", lat:55.3422, lng:-131.6461, type:"end",
+    name:"Ketchikan, AK", lat:55.3422, lng:-131.6461, type:"end", wiki:"Ketchikan,_Alaska",
     dates:"Aug 12–14", nights:3,
     from:"~6 hr ferry crossing", to:null,
     activities:["Misty Fjords National Monument day trip", "Creek Street", "Tongass National Forest", "Trip end — arrange the ride home"]
@@ -306,30 +335,42 @@ const colors = {
 
 const map = L.map('map', { zoomControl:true }).setView([48, -122], 5);
 
-L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-  maxZoom: 16,
-  attribution: 'Map data © OpenStreetMap contributors, SRTM | Map style © OpenTopoMap (CC-BY-SA)'
+// Road map basemap (CARTO Voyager — free, no key, road-focused)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  maxZoom: 19,
+  subdomains: 'abcd',
+  attribution: '© OpenStreetMap contributors © <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map);
 
-function popupHtml(s, idx){
+function popupHtml(s, idx, imgUrl){
   const fromRow = s.from ? `<div><span class="stat-lbl">From last stop</span><span class="stat-val">${s.from}</span></div>` : `<div><span class="stat-lbl">From last stop</span><span class="stat-val">— start —</span></div>`;
   const toRow = s.to ? `<div><span class="stat-lbl">To next stop</span><span class="stat-val">${s.to}</span></div>` : `<div><span class="stat-lbl">To next stop</span><span class="stat-val">— trip end —</span></div>`;
   const nightsLabel = s.nights === 0 ? "Pass through" : (s.nights === 1 ? "1 night" : `${s.nights} nights`);
   const actItems = s.activities.map(a => `<li>${a}</li>`).join('');
+  const photoTag = imgUrl ? `<img class="popup-photo" src="${imgUrl}" alt="${s.name}">` : '';
   return `
-    <div class="popup-eyebrow">Stop ${idx+1} of ${stops.length}</div>
-    <div class="popup-title">${s.name}</div>
-    <div class="popup-dates">${s.dates} &middot; ${nightsLabel}</div>
-    <div class="popup-stats">
-      ${fromRow}
-      ${toRow}
+    ${photoTag}
+    <div class="popup-body">
+      <div class="popup-eyebrow">Stop ${idx+1} of ${stops.length}</div>
+      <div class="popup-title">${s.name}</div>
+      <div class="popup-dates">${s.dates} &middot; ${nightsLabel}</div>
+      <div class="popup-stats">
+        ${fromRow}
+        ${toRow}
+      </div>
+      <div class="popup-activities-lbl">Do</div>
+      <ul class="popup-activities">${actItems}</ul>
     </div>
-    <div class="popup-activities-lbl">Do</div>
-    <ul class="popup-activities">${actItems}</ul>
   `;
 }
 
+function tooltipHtml(s, imgUrl){
+  const thumb = imgUrl ? `<img class="tooltip-thumb" src="${imgUrl}" alt="">` : '';
+  return `${thumb}<span>${s.name}</span>`;
+}
+
 const latlngs = [];
+const markers = [];
 
 stops.forEach((s, idx) => {
   latlngs.push([s.lat, s.lng]);
@@ -341,8 +382,30 @@ stops.forEach((s, idx) => {
     iconAnchor:[13,20]
   });
   const marker = L.marker([s.lat, s.lng], { icon }).addTo(map);
-  marker.bindTooltip(s.name, { className:'stop-tooltip', direction:'top', offset:[0,-18] });
-  marker.bindPopup(popupHtml(s, idx));
+  marker.bindTooltip(tooltipHtml(s, null), { className:'stop-tooltip', direction:'top', offset:[0,-18] });
+  marker.bindPopup(popupHtml(s, idx, null));
+  markers.push(marker);
+});
+
+// Fetch a representative photo for each stop from Wikipedia's public REST API
+// (CORS-enabled, no key required). Falls back gracefully if a title has no image.
+async function loadStopImage(title){
+  try{
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`);
+    if(!res.ok) return null;
+    const data = await res.json();
+    return (data.thumbnail && data.thumbnail.source) ? data.thumbnail.source : null;
+  }catch(e){
+    return null;
+  }
+}
+
+stops.forEach((s, idx) => {
+  loadStopImage(s.wiki).then(url => {
+    if(!url) return;
+    markers[idx].setTooltipContent(tooltipHtml(s, url));
+    markers[idx].setPopupContent(popupHtml(s, idx, url));
+  });
 });
 
 // Route line — solid for driving, dashed for the ferry leg (Prince Rupert -> Ketchikan)
