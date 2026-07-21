@@ -83,6 +83,20 @@
   .legend .row{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
   .legend .dot{width:13px; height:13px; border-radius:50%; flex-shrink:0; border:2px solid rgba(0,0,0,0.25);}
   .legend .row span.label{font-size:12px; color:var(--ink); font-family:'Source Serif 4', serif;}
+  .legend .divider{ height:1px; background:#D8CFAF; margin:8px 0; border:none; }
+  .legend .row.toggle{
+    cursor:pointer; margin-bottom:0; padding:4px 6px; margin:0 -6px; border-radius:4px;
+    transition:background 0.15s ease;
+  }
+  .legend .row.toggle:hover{ background:rgba(0,0,0,0.05); }
+  .legend .row.toggle .dot{ opacity:0.35; transition:opacity 0.15s ease, box-shadow 0.15s ease; }
+  .legend .row.toggle.active .dot{ opacity:1; }
+  .legend .row.toggle span.label{ line-height:1.25; }
+  .legend .row.toggle span.label .sub{ display:block; font-size:10px; color:var(--grey); font-style:italic; }
+  .legend .row.toggle#stops-toggle .dot{ background:#1A1A1A; }
+  .legend .row.toggle#stops-toggle.active .dot{ box-shadow:0 0 0 3px rgba(0,0,0,0.2); }
+  .legend .row.toggle#water-toggle .dot{ background:#2E75B6; }
+  .legend .row.toggle#water-toggle.active .dot{ box-shadow:0 0 0 3px rgba(46,117,182,0.22); }
 
   .hint{
     position:absolute; bottom:20px; right:20px; z-index:999;
@@ -110,10 +124,37 @@
   }
   .leaflet-popup-content{ margin:0 !important; width:270px !important; font-family:'Source Serif 4', serif; }
   .leaflet-popup-tip{ background:var(--card-bg); }
+
+  /* Photo gallery */
+  .popup-gallery{ position:relative; }
+  .gallery-track{
+    display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+    scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .gallery-track::-webkit-scrollbar{ display:none; }
   .popup-photo{
-    width:100%; height:130px; object-fit:cover; display:block;
+    width:100%; height:130px; object-fit:cover; display:block; flex:0 0 100%;
+    scroll-snap-align:start;
     background:linear-gradient(135deg, #D8CFAF, #C9C2A8);
   }
+  .gallery-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:24px; height:24px; border-radius:50%; border:none;
+    background:rgba(0,0,0,0.45); color:#fff; font-size:16px; line-height:1;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .gallery-arrow.prev{ left:6px; }
+  .gallery-arrow.next{ right:6px; }
+  .gallery-dots{
+    position:absolute; bottom:8px; left:0; right:0;
+    display:flex; justify-content:center; gap:5px;
+  }
+  .gallery-dots .dot{
+    width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.6);
+    box-shadow:0 0 2px rgba(0,0,0,0.5);
+  }
+  .gallery-dots .dot.active{ background:#fff; }
+
   .popup-body{ padding:14px 16px; }
   .popup-eyebrow{
     font-family:'Oswald', sans-serif; font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
@@ -148,6 +189,43 @@
     background:rgba(255,255,255,0.15);
   }
 
+  /* Water-fill stations — separate optional layer */
+  .leaflet-tooltip.water-tooltip{
+    background:var(--card-bg); color:var(--ink); border:2px solid #2E75B6;
+    border-radius:6px; padding:0; width:210px; box-sizing:border-box;
+    white-space:normal; word-wrap:break-word; overflow-wrap:break-word;
+    box-shadow:0 4px 14px rgba(0,0,0,0.3);
+  }
+  .leaflet-tooltip.water-tooltip::before{ border-top-color:#2E75B6; }
+  .water-tip-hint{
+    font-family:'Oswald', sans-serif; font-size:9px; text-transform:uppercase; letter-spacing:0.04em;
+    color:#2E75B6; padding:5px 10px 7px; border-top:1px solid #E3DBC2; margin-top:2px;
+  }
+  .water-popup-title{ color:#1E5A8A !important; }
+  .water-popup-link{
+    display:inline-block; margin-top:6px; font-family:'Oswald', sans-serif; font-size:11px;
+    text-transform:uppercase; letter-spacing:0.05em; color:#fff !important; background:#2E75B6;
+    padding:7px 12px; border-radius:4px; text-decoration:none; font-weight:600;
+  }
+  .water-popup-link:hover{ background:#1E5A8A; }
+  .water-tip-photo{
+    width:100%; height:90px; object-fit:cover; display:block;
+    background:linear-gradient(135deg, #D8CFAF, #C9C2A8);
+  }
+  .water-tip-body{ padding:8px 10px; }
+  .water-tip-name{
+    font-family:'Oswald', sans-serif; font-weight:600; font-size:12.5px; color:#1E5A8A; margin-bottom:2px;
+  }
+  .water-tip-desc{ font-size:11.5px; line-height:1.4; margin-bottom:5px; }
+  .water-tip-dist{
+    font-family:'Oswald', sans-serif; font-size:9.5px; text-transform:uppercase; letter-spacing:0.03em;
+    color:var(--grey);
+  }
+  .water-tip-confidence{
+    display:inline-block; margin-top:4px; font-family:'Oswald', sans-serif; font-size:8.5px;
+    text-transform:uppercase; letter-spacing:0.05em; color:#2E75B6;
+  }
+
   @media (max-width:640px){
     header{ padding:0 14px; }
     header .title-block h1{ font-size:16px; }
@@ -168,7 +246,7 @@
 <header>
   <div class="title-block">
     <h1>San Diego → Alaska</h1>
-    <p>The long way up — Jul 20 to Aug 14, 2026</p>
+    <p>The long way up — Jul 22 to Aug 15, 2026</p>
   </div>
   <div class="right-side">
     <nav class="tabs">
@@ -176,9 +254,9 @@
       <a href="itinerary.html">Itinerary</a>
     </nav>
     <div class="stats">
-      <div><span class="num">21</span><span class="lbl">Stops</span></div>
-      <div><span class="num">7</span><span class="lbl">Nat'l Parks</span></div>
-      <div><span class="num">26</span><span class="lbl">Days</span></div>
+      <div><span class="num">19</span><span class="lbl">Stops</span></div>
+      <div><span class="num">8</span><span class="lbl">Nat'l Parks</span></div>
+      <div><span class="num">25</span><span class="lbl">Days</span></div>
     </div>
   </div>
 </header>
@@ -187,150 +265,153 @@
 
 <div class="legend">
   <h3>Stop types</h3>
+  <div class="row toggle active" id="stops-toggle" role="button" tabindex="0" aria-pressed="true">
+    <div class="dot"></div>
+    <span class="label">Show stops<span class="sub">click to hide</span></span>
+  </div>
   <div class="row"><div class="dot" style="background:#2F4A34;"></div><span class="label">National park / hike</span></div>
   <div class="row"><div class="dot" style="background:#C1502E;"></div><span class="label">Climbing</span></div>
   <div class="row"><div class="dot" style="background:#3B6E7E;"></div><span class="label">City stop</span></div>
   <div class="row"><div class="dot" style="background:#8A8272;"></div><span class="label">Transit / rest</span></div>
-  <div class="row"><div class="dot" style="background:#B8860B;"></div><span class="label">Bonus: touch Alaska</span></div>
-  <div class="row"><div class="dot" style="background:#6B4A8A;"></div><span class="label">Ferry / trip end</span></div>
+  <hr class="divider">
+  <div class="row toggle" id="water-toggle" role="button" tabindex="0" aria-pressed="false">
+    <div class="dot"></div>
+    <span class="label">RV water fill<span class="sub">click to show</span></span>
+  </div>
 </div>
 
-<div class="hint">Click any stop for details &middot; dashed line = ferry</div>
+<div class="hint">Click any stop for details &middot; swipe photos to browse</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const stops = [
   {
     name:"San Diego, CA", lat:32.7157, lng:-117.1611, type:"city", wiki:"San_Diego",
-    dates:"Jul 20", nights:0,
+    dates:"Jul 22", nights:0,
     from:null, to:"140 mi / ~2.5 hr",
     activities:["Trip start — final gear check & packing", "Load the truck camper and hit the road"]
   },
   {
     name:"Joshua Tree National Park", lat:33.8734, lng:-115.9010, type:"park", wiki:"Joshua_Tree_National_Park",
-    dates:"Jul 20", nights:1,
+    dates:"Jul 22–23", nights:2,
     from:"140 mi / ~2.5 hr", to:"320 mi / ~6 hr",
-    activities:["Bouldering & easy trad in Hidden Valley", "Sunset at Keys View", "Cholla Cactus Garden short walk"]
+    activities:[
+      "Beginner top-rope day at Trashcan Rock — Loose Lady (5.6) and Double Cross (5.7), both walk-up anchors, great for dialing in belay & rappel basics",
+      "Hidden Valley Nature Trail (1 mi loop) to warm up and scope the boulders",
+      "Sunset hike up Ryan Mountain (3 mi RT) — the best panoramic view in the park"
+    ]
   },
   {
     name:"Yosemite (Tuolumne Meadows)", lat:37.8731, lng:-119.3591, type:"park", wiki:"Tuolumne_Meadows",
-    dates:"Jul 21–23", nights:3,
+    dates:"Jul 24–27", nights:4,
     from:"320 mi / ~6 hr", to:"140 mi / ~3 hr",
-    activities:["Trad multi-pitch on granite domes", "Cathedral Peak", "Tenaya Lake swim", "High-country hikes"]
+    activities:[
+      "Day 1: top-rope fundamentals at Puppy Dome — low-angle granite apron, easy walk-off, ideal first day on real rock",
+      "Day 2: first multi-pitch — Daff Dome's Bunny Slopes (5.6, 4 pitches), a classic low-commitment step up",
+      "Day 3: Cathedral Peak's SW Face (5.6, 5 pitches) with the experienced partner leading, or the Cathedral Lakes hike (7 mi RT) as a rest-day alternative",
+      "Dog Lake hike from the Lembert Dome trailhead (2.8 mi RT) — easy alpine lake, great evening walk"
+    ]
   },
   {
     name:"South Lake Tahoe", lat:38.9399, lng:-119.9772, type:"city", wiki:"South_Lake_Tahoe,_California",
-    dates:"Jul 24", nights:1,
+    dates:"Jul 28", nights:1,
     from:"140 mi / ~3 hr", to:"60 mi / ~1 hr",
-    activities:["Emerald Bay hike down to Vikingsholm", "Swim in the lake", "Easy rest day"]
+    activities:["Emerald Bay hike down to Vikingsholm (2 mi RT) — one of the best short hikes at the lake", "Eagle Falls short hike", "Swim in the lake"]
   },
   {
     name:"Reno, NV", lat:39.5299, lng:-119.8143, type:"transit", wiki:"Reno,_Nevada",
-    dates:"Jul 25 (morning)", nights:0,
+    dates:"Jul 29 (morning)", nights:0,
     from:"60 mi / ~1 hr", to:"350 mi / ~6.5 hr",
     activities:["Quick coffee & resupply stop"]
   },
   {
     name:"Crater Lake National Park", lat:42.9295, lng:-122.1279, type:"park", wiki:"Crater_Lake_National_Park",
-    dates:"Jul 25", nights:1,
+    dates:"Jul 29", nights:1,
     from:"350 mi / ~6.5 hr", to:"130 mi / ~2.5 hr",
-    activities:["Rim Drive scenic loop", "Cleetwood Cove Trail (if open)", "Sunset at the rim"]
+    activities:["Rim Drive scenic loop", "Cleetwood Cove Trail — the only route down to the water (if open)", "Garfield Peak Trail (3.4 mi RT) for the best rim panorama", "Sunset at the rim"]
   },
   {
     name:"Bend, OR (Smith Rock)", lat:44.0582, lng:-121.3153, type:"climb", wiki:"Smith_Rock_State_Park",
-    dates:"Jul 26", nights:1,
+    dates:"Jul 30", nights:1,
     from:"130 mi / ~2.5 hr", to:"160 mi / ~3 hr",
-    activities:["Sport climbing at Smith Rock", "Misery Ridge loop trail", "Views of the Crooked River gorge"]
+    activities:["Sport climbing at Smith Rock", "Misery Ridge loop trail (3.7 mi) — the iconic view of the Crooked River gorge", "River Trail for a flatter alternative"]
   },
   {
     name:"Portland, OR", lat:45.5152, lng:-122.6784, type:"city", wiki:"Portland,_Oregon",
-    dates:"Jul 27", nights:1,
+    dates:"Jul 31", nights:1,
     from:"160 mi / ~3 hr", to:"175 mi / ~3 hr",
-    activities:["Food carts", "Powell's Books", "Waterfront walk"]
+    activities:["Food carts", "Powell's Books", "Waterfront walk", "Side trip to Multnomah Falls if time allows"]
   },
   {
     name:"Seattle, WA", lat:47.6061, lng:-122.3328, type:"city", wiki:"Seattle",
-    dates:"Jul 28", nights:1,
+    dates:"Aug 1", nights:1,
     from:"175 mi / ~3 hr", to:"90 mi / ~2 hr",
     activities:["Pike Place Market", "Kerry Park skyline view", "Waterfront"]
   },
   {
     name:"Mt. Rainier National Park", lat:46.8671, lng:-121.6999, type:"park", wiki:"Mount_Rainier_National_Park",
-    dates:"Jul 29", nights:1,
+    dates:"Aug 2", nights:1,
     from:"90 mi / ~2 hr", to:"170 mi / ~3.5 hr",
-    activities:["Skyline Trail loop", "Paradise wildflower meadows", "Reflection Lakes"]
+    activities:["Skyline Trail loop (5.5 mi) — wildflower meadows and close-up glacier views, one of the most beautiful hikes in the Northwest", "Reflection Lakes", "Naches Peak Loop if time allows"]
   },
   {
     name:"Olympic National Park", lat:47.8021, lng:-123.6044, type:"park", wiki:"Olympic_National_Park",
-    dates:"Jul 30", nights:1,
+    dates:"Aug 3", nights:1,
     from:"170 mi / ~3.5 hr", to:"230 mi / ~4.5 hr",
-    activities:["Hurricane Ridge", "Hoh Rainforest", "Coastal beach walk"]
+    activities:["Hurricane Ridge + Hurricane Hill Trail (3.2 mi RT) for panoramic Olympic Mountain views", "Hoh Rainforest — moss-draped, otherworldly", "Rialto Beach coastal hike to Hole-in-the-Wall"]
   },
   {
     name:"North Cascades National Park", lat:48.7718, lng:-121.2985, type:"park", wiki:"North_Cascades_National_Park",
-    dates:"Jul 31", nights:1,
+    dates:"Aug 4", nights:1,
     from:"230 mi / ~4.5 hr", to:"230 mi / ~5 hr",
-    activities:["Maple Pass / Cutthroat Pass hike", "Diablo Lake overlook"]
+    activities:["Maple Pass Loop (7.2 mi) — one of the most scenic day hikes in Washington", "Diablo Lake overlook"]
   },
   {
     name:"Squamish, BC", lat:49.7016, lng:-123.1558, type:"climb", wiki:"Stawamus_Chief",
-    dates:"Aug 1–4", nights:4,
+    dates:"Aug 5–8", nights:4,
     from:"230 mi / ~5 hr", to:"300 mi / ~5.5 hr",
-    activities:["Trad multi-pitch on the Stawamus Chief", "Hike to the top of the Chief", "Sea to Sky Gondola"]
+    activities:["Trad multi-pitch on the Stawamus Chief", "Hike to the top of the Chief (all three summits) — huge views over Howe Sound", "Sea to Sky Gondola", "Shannon Falls short walk"]
   },
   {
     name:"Kamloops, BC", lat:50.6745, lng:-120.3273, type:"transit", wiki:"Kamloops",
-    dates:"Aug 5", nights:1,
+    dates:"Aug 9", nights:1,
     from:"300 mi / ~5.5 hr", to:"300 mi / ~5.5 hr",
     activities:["Rest & resupply — halfway point to Banff"]
   },
   {
     name:"Banff National Park", lat:51.4968, lng:-115.9281, type:"park", wiki:"Banff_National_Park",
-    dates:"Aug 6", nights:1,
+    dates:"Aug 10", nights:1,
     from:"300 mi / ~5.5 hr", to:"180 mi / ~3.5 hr",
-    activities:["Lake Louise", "Moraine Lake", "Johnston Canyon hike"]
+    activities:["Lake Louise lakeshore walk + Plain of Six Glaciers teahouse hike", "Moraine Lake Rockpile viewpoint", "Johnston Canyon to the Ink Pots"]
   },
   {
     name:"Jasper National Park", lat:52.8734, lng:-117.9543, type:"park", wiki:"Jasper_National_Park",
-    dates:"Aug 7", nights:1,
+    dates:"Aug 11", nights:1,
     from:"180 mi / ~3.5 hr", to:"235 mi / ~4.5 hr",
-    activities:["Icefields Parkway stops", "Athabasca Glacier", "Maligne Lake", "Wildlife watching"]
+    activities:["Icefields Parkway stops — Peyto Lake and Bow Lake viewpoints", "Athabasca Glacier", "Wilcox Pass Trail for the best glacier views without walking on the ice", "Maligne Canyon"]
   },
   {
     name:"Prince George, BC", lat:53.9171, lng:-122.7497, type:"transit", wiki:"Prince_George,_British_Columbia",
-    dates:"Aug 8", nights:1,
+    dates:"Aug 12", nights:1,
     from:"235 mi / ~4.5 hr", to:"230 mi / ~4 hr",
     activities:["Rest stop on the Yellowhead Highway"]
   },
   {
     name:"Smithers, BC", lat:54.7822, lng:-127.1687, type:"transit", wiki:"Smithers,_British_Columbia",
-    dates:"Aug 9", nights:1,
+    dates:"Aug 13", nights:1,
     from:"230 mi / ~4 hr", to:"200 mi / ~4 hr",
     activities:["Rest stop", "Small mountain town, good coffee"]
   },
   {
-    name:"Hyder, AK", lat:55.9166, lng:-130.0201, type:"bonus", wiki:"Salmon_Glacier",
-    dates:"Aug 10", nights:1,
-    from:"200 mi / ~4 hr", to:"225 mi / ~4.5 hr",
-    activities:["Drive to Salmon Glacier — largest road-accessible glacier in the world", "Fish Creek: watch grizzlies fishing for salmon", "Touch Alaska with zero ferry required"]
-  },
-  {
-    name:"Prince Rupert, BC", lat:54.3150, lng:-130.3208, type:"transit", wiki:"Prince_Rupert,_British_Columbia",
-    dates:"Aug 11", nights:1,
-    from:"225 mi / ~4.5 hr", to:"~6 hr ferry crossing",
-    activities:["Prep for the ferry", "Walk the harbor"]
-  },
-  {
-    name:"Ketchikan, AK", lat:55.3422, lng:-131.6461, type:"end", wiki:"Ketchikan,_Alaska",
-    dates:"Aug 12–14", nights:3,
-    from:"~6 hr ferry crossing", to:null,
-    activities:["Misty Fjords National Monument day trip", "Creek Street", "Tongass National Forest", "Trip end — arrange the ride home"]
+    name:"Hyder, AK", lat:55.9166, lng:-130.0201, type:"park", wiki:"Salmon_Glacier",
+    dates:"Aug 14–15", nights:2,
+    from:"200 mi / ~4 hr", to:null,
+    activities:["Drive to Salmon Glacier — largest road-accessible glacier in the world", "Fish Creek: watch grizzlies fishing for salmon", "Touch Alaska with zero ferry required", "Trip end — relax and arrange the way home"]
   }
 ];
 
 const colors = {
-  park:"#2F4A34", climb:"#C1502E", city:"#3B6E7E",
-  transit:"#8A8272", bonus:"#B8860B", end:"#6B4A8A"
+  park:"#2F4A34", climb:"#C1502E", city:"#3B6E7E", transit:"#8A8272"
 };
 
 const map = L.map('map', { zoomControl:true }).setView([48, -122], 5);
@@ -342,14 +423,26 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
   attribution: '© OpenStreetMap contributors © <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map);
 
-function popupHtml(s, idx, imgUrl){
+function galleryHtml(imgUrls){
+  if(!imgUrls || !imgUrls.length) return '';
+  const slides = imgUrls.map(u => `<img class="popup-photo" src="${u}" loading="lazy">`).join('');
+  const arrows = imgUrls.length > 1
+    ? `<button type="button" class="gallery-arrow prev" aria-label="Previous photo" onclick="this.closest('.popup-gallery').querySelector('.gallery-track').scrollBy({left:-270,behavior:'smooth'})">&#8249;</button>
+       <button type="button" class="gallery-arrow next" aria-label="Next photo" onclick="this.closest('.popup-gallery').querySelector('.gallery-track').scrollBy({left:270,behavior:'smooth'})">&#8250;</button>`
+    : '';
+  const dots = imgUrls.length > 1
+    ? `<div class="gallery-dots">${imgUrls.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}"></span>`).join('')}</div>`
+    : '';
+  return `<div class="popup-gallery"><div class="gallery-track">${slides}</div>${arrows}${dots}</div>`;
+}
+
+function popupHtml(s, idx, imgUrls){
   const fromRow = s.from ? `<div><span class="stat-lbl">From last stop</span><span class="stat-val">${s.from}</span></div>` : `<div><span class="stat-lbl">From last stop</span><span class="stat-val">— start —</span></div>`;
   const toRow = s.to ? `<div><span class="stat-lbl">To next stop</span><span class="stat-val">${s.to}</span></div>` : `<div><span class="stat-lbl">To next stop</span><span class="stat-val">— trip end —</span></div>`;
   const nightsLabel = s.nights === 0 ? "Pass through" : (s.nights === 1 ? "1 night" : `${s.nights} nights`);
   const actItems = s.activities.map(a => `<li>${a}</li>`).join('');
-  const photoTag = imgUrl ? `<img class="popup-photo" src="${imgUrl}" alt="${s.name}">` : '';
   return `
-    ${photoTag}
+    ${galleryHtml(imgUrls)}
     <div class="popup-body">
       <div class="popup-eyebrow">Stop ${idx+1} of ${stops.length}</div>
       <div class="popup-title">${s.name}</div>
@@ -371,6 +464,8 @@ function tooltipHtml(s, imgUrl){
 
 const latlngs = [];
 const markers = [];
+const stopsLayer = L.layerGroup();
+let stopsVisible = true;
 
 stops.forEach((s, idx) => {
   latlngs.push([s.lat, s.lng]);
@@ -381,40 +476,306 @@ stops.forEach((s, idx) => {
     iconSize:[26,26],
     iconAnchor:[13,20]
   });
-  const marker = L.marker([s.lat, s.lng], { icon }).addTo(map);
+  const marker = L.marker([s.lat, s.lng], { icon });
   marker.bindTooltip(tooltipHtml(s, null), { className:'stop-tooltip', direction:'top', offset:[0,-18] });
-  marker.bindPopup(popupHtml(s, idx, null));
+  marker.bindPopup(popupHtml(s, idx, []));
+  marker.addTo(stopsLayer);
   markers.push(marker);
 });
+stopsLayer.addTo(map);
 
-// Fetch a representative photo for each stop from Wikipedia's public REST API
-// (CORS-enabled, no key required). Falls back gracefully if a title has no image.
-async function loadStopImage(title){
-  try{
-    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`);
-    if(!res.ok) return null;
-    const data = await res.json();
-    return (data.thumbnail && data.thumbnail.source) ? data.thumbnail.source : null;
-  }catch(e){
-    return null;
-  }
+const stopsToggle = document.getElementById('stops-toggle');
+function setStopsVisible(visible){
+  stopsVisible = visible;
+  stopsToggle.classList.toggle('active', stopsVisible);
+  stopsToggle.setAttribute('aria-pressed', String(stopsVisible));
+  stopsToggle.querySelector('.sub').textContent = stopsVisible ? 'click to hide' : 'click to show';
+  if(stopsVisible){ stopsLayer.addTo(map); } else { map.removeLayer(stopsLayer); }
 }
+stopsToggle.addEventListener('click', () => setStopsVisible(!stopsVisible));
+stopsToggle.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setStopsVisible(!stopsVisible); }
+});
 
-stops.forEach((s, idx) => {
-  loadStopImage(s.wiki).then(url => {
-    if(!url) return;
-    markers[idx].setTooltipContent(tooltipHtml(s, url));
-    markers[idx].setPopupContent(popupHtml(s, idx, url));
+// Sync the gallery dots to whichever photo is scrolled into view
+map.on('popupopen', (e) => {
+  const el = e.popup.getElement();
+  if(!el) return;
+  const track = el.querySelector('.gallery-track');
+  const dots = el.querySelectorAll('.gallery-dots .dot');
+  if(!track || !dots.length) return;
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / track.clientWidth);
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
   });
 });
 
-// Route line — solid for driving, dashed for the ferry leg (Prince Rupert -> Ketchikan)
-const ferryStartIdx = stops.findIndex(s => s.name.startsWith("Prince Rupert"));
-const drivingSegment = latlngs.slice(0, ferryStartIdx + 1);
-const ferrySegment = latlngs.slice(ferryStartIdx);
+// Fetch a few representative photos for each stop from Wikipedia's public REST API
+// (CORS-enabled, no key required). Falls back to a single summary thumbnail, then gracefully to none.
+async function loadStopImages(title){
+  try{
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${title}`);
+    if(res.ok){
+      const data = await res.json();
+      const imgs = (data.items || [])
+        .filter(it => it.type === 'image' && it.srcset && it.srcset.length && !/\.svg$/i.test(it.title || ''))
+        .map(it => {
+          const src = it.srcset[it.srcset.length - 1].src;
+          return src.startsWith('//') ? `https:${src}` : src;
+        });
+      if(imgs.length) return imgs.slice(0, 8);
+    }
+  }catch(e){ /* fall through to summary thumbnail */ }
+  try{
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`);
+    if(res.ok){
+      const data = await res.json();
+      if(data.thumbnail && data.thumbnail.source) return [data.thumbnail.source];
+    }
+  }catch(e){ /* no image available */ }
+  return [];
+}
 
-L.polyline(drivingSegment, { color:'#C1502E', weight:3, opacity:0.85 }).addTo(map);
-L.polyline(ferrySegment, { color:'#3B6E7E', weight:3, opacity:0.85, dashArray:'6 8' }).addTo(map);
+stops.forEach((s, idx) => {
+  loadStopImages(s.wiki).then(urls => {
+    if(!urls.length) return;
+    markers[idx].setTooltipContent(tooltipHtml(s, urls[0]));
+    markers[idx].setPopupContent(popupHtml(s, idx, urls));
+  });
+});
+
+// Route line — one continuous drive from San Diego to Hyder, no ferry required
+L.polyline(latlngs, { color:'#C1502E', weight:3, opacity:0.85 }).addTo(map);
+
+// --- RV water-fill stations — an optional overlay layer, NOT part of the route/stops ---
+// Just an FYI layer: free potable water sources found along the corridors this route follows.
+// Toggled on/off via the legend; never added to the polyline or the stops[] itinerary.
+const waterStops = [
+  {
+    name: "Cactus City Rest Area (I-10)",
+    lat: 33.7500, lng: -115.9700,
+    road: "I-10, both directions, mile marker 159, ~15 mi east of Indio, CA",
+    description: "State-maintained rest area with free drinking water taps and restrooms; no RV dump on site.",
+    nearPrevStop: "San Diego, CA", milesFromPrev: 125,
+    nearNextStop: "Joshua Tree National Park", milesFromNext: 20,
+    wiki: "Indio,_California",
+    confidence: "verified"
+  },
+  {
+    name: "Speedway Gas Station (Bishop)",
+    lat: 37.3636, lng: -118.3953,
+    road: "US-395, Bishop, CA",
+    description: "Free potable water hydrants and RV dump behind the car wash; donation box inside for charity, not required.",
+    nearPrevStop: "Joshua Tree National Park", milesFromPrev: 185,
+    nearNextStop: "Yosemite (Tuolumne Meadows)", milesFromNext: 120,
+    wiki: "Bishop,_California",
+    confidence: "likely"
+  },
+  {
+    name: "Shell Station, Bridgeport",
+    lat: 38.2555, lng: -119.2284,
+    road: "US-395, 76773 Main St, Bridgeport, CA",
+    description: "Gas station reported to offer potable water fill-ups for travelers heading north toward Tahoe.",
+    nearPrevStop: "Yosemite (Tuolumne Meadows)", milesFromPrev: 45,
+    nearNextStop: "South Lake Tahoe", milesFromNext: 75,
+    wiki: "Bridgeport,_California",
+    confidence: "uncertain"
+  },
+  {
+    name: "Silver Sage Travel Plaza",
+    lat: 39.5700, lng: -119.7500,
+    road: "I-80 area, Reno, NV",
+    description: "Truck stop reported to offer free tank dumping and water access, plus a convenience store for resupply.",
+    nearPrevStop: "South Lake Tahoe", milesFromPrev: 60,
+    nearNextStop: "Crater Lake National Park", milesFromNext: 350,
+    wiki: "Reno,_Nevada",
+    confidence: "likely"
+  },
+  {
+    name: "Peter Skene Ogden State Scenic Viewpoint",
+    lat: 44.4000, lng: -121.1500,
+    road: "US-97 northbound, milepost 112.6, ~25 mi north of Bend, OR",
+    description: "Oregon State Parks rest area overlooking the Crooked River Gorge; official amenities list confirms drinking water.",
+    nearPrevStop: "Bend, OR (Smith Rock)", milesFromPrev: 25,
+    nearNextStop: "Portland, OR", milesFromNext: 135,
+    wiki: "Peter_Skene_Ogden_State_Scenic_Viewpoint",
+    confidence: "verified"
+  },
+  {
+    name: "Gee Creek Rest Area",
+    lat: 45.8300, lng: -122.6850,
+    road: "I-5 northbound, near La Center/Ridgefield, WA",
+    description: "Year-round rest area with a dump station and potable water fill, per multiple traveler reports.",
+    nearPrevStop: "Portland, OR", milesFromPrev: 20,
+    nearNextStop: "Seattle, WA", milesFromNext: 155,
+    wiki: "Ridgefield,_Washington",
+    confidence: "likely"
+  },
+  {
+    name: "Smokey Point Rest Area",
+    lat: 48.1650, lng: -122.2350,
+    road: "I-5 northbound, mile marker 207, near Marysville/Arlington, WA",
+    description: "WSDOT rest area with a potable water fill station; travelers note low pressure and a timed shutoff button.",
+    nearPrevStop: "Olympic National Park", milesFromPrev: 110,
+    nearNextStop: "North Cascades National Park", milesFromNext: 90,
+    wiki: "Marysville,_Washington",
+    confidence: "likely"
+  },
+  {
+    name: "Squamish Adventure Centre",
+    lat: 49.7016, lng: -123.1450,
+    road: "Downtown Squamish, BC, just off BC-99",
+    description: "Visitor centre with public potable water taps for topping off before or after the Chief.",
+    nearPrevStop: "North Cascades National Park", milesFromPrev: 230,
+    nearNextStop: "Squamish, BC", milesFromNext: 0,
+    wiki: "Stawamus_Chief",
+    confidence: "likely"
+  },
+  {
+    name: "Canadian Tire Squamish Free Dump & Water",
+    lat: 49.6970, lng: -123.1580,
+    road: "BC-99, Squamish, BC (parking lot, near the Subway)",
+    description: "Named free-dump-and-water listing on iOverlander; located at the base of a transmission tower in the lot.",
+    nearPrevStop: "Squamish, BC", milesFromPrev: 0,
+    nearNextStop: "Kamloops, BC", milesFromNext: 300,
+    wiki: "Stawamus_Chief",
+    confidence: "likely"
+  },
+  {
+    name: "City of Kamloops Free Sani-Dump (Mission Flats Rd)",
+    lat: 50.6950, lng: -120.3800,
+    road: "610 Mission Flats Rd, Kamloops, BC",
+    description: "Official City of Kamloops facility — free dump and free potable water, seasonal May–October, open 24/7 in season. Two more free city locations exist (Kingston Ave, Trans-Canada Hwy W).",
+    nearPrevStop: "Squamish, BC", milesFromPrev: 300,
+    nearNextStop: "Banff National Park", milesFromNext: 300,
+    wiki: "Kamloops",
+    confidence: "verified"
+  },
+  {
+    name: "Waterfowl Lakes Campground",
+    lat: 51.7580, lng: -116.5380,
+    road: "Icefields Parkway (Hwy 93), between Lake Louise and Saskatchewan River Crossing, AB",
+    description: "Parks Canada campground with potable water; likely tied to a camping/day-use fee rather than free-to-all — confirm before relying on it.",
+    nearPrevStop: "Banff National Park", milesFromPrev: 35,
+    nearNextStop: "Jasper National Park", milesFromNext: 130,
+    wiki: "Icefields_Parkway",
+    confidence: "uncertain"
+  },
+  {
+    name: "Mount Robson Visitor Centre",
+    lat: 53.0080, lng: -119.1850,
+    road: "Yellowhead Hwy 16, Mount Robson Provincial Park, BC",
+    description: "Provincial visitor centre at the park entrance; visitor centres commonly offer free water fill for travelers, but not specifically confirmed for this one online — worth asking on arrival.",
+    nearPrevStop: "Jasper National Park", milesFromPrev: 55,
+    nearNextStop: "Prince George, BC", milesFromNext: 180,
+    wiki: "Mount_Robson_Provincial_Park",
+    confidence: "uncertain"
+  },
+  {
+    name: "Prince George Municipal RV Dump Station",
+    lat: 53.9020, lng: -122.7550,
+    road: "18th Ave & Quinn St S, Prince George, BC",
+    description: "Free municipal dump station; potable water fill availability not explicitly confirmed online, worth verifying on site.",
+    nearPrevStop: "Prince George, BC", milesFromPrev: 0,
+    nearNextStop: "Smithers, BC", milesFromNext: 230,
+    wiki: "Prince_George,_British_Columbia",
+    confidence: "uncertain"
+  },
+  {
+    name: "Smithers Visitor Centre",
+    lat: 54.7822, lng: -127.1687,
+    road: "1411 Court St, Smithers, BC",
+    description: "Visitor centre with an RV dump station on site and a free water filling station reported in the area.",
+    nearPrevStop: "Prince George, BC", milesFromPrev: 230,
+    nearNextStop: "Hyder, AK", milesFromNext: 200,
+    wiki: "Smithers,_British_Columbia",
+    confidence: "likely"
+  },
+  {
+    name: "Stewart Free RV Dump & Water Station",
+    lat: 55.9350, lng: -130.0180,
+    road: "Highway 37A, Stewart, BC — just before the border crossing into Hyder, AK",
+    description: "Free dump and potable water station reported in Stewart, the last services stop before Hyder. Exact operator/site not pinned down online — confirm via iOverlander on arrival.",
+    nearPrevStop: "Smithers, BC", milesFromPrev: 195,
+    nearNextStop: "Hyder, AK", milesFromNext: 5,
+    wiki: "Stewart,_British_Columbia",
+    confidence: "likely"
+  }
+];
+
+const waterLayer = L.layerGroup();
+let waterVisible = false;
+
+function waterTooltipHtml(w, imgUrl){
+  const photo = imgUrl ? `<img class="water-tip-photo" src="${imgUrl}" loading="lazy">` : '';
+  const confidence = w.confidence && w.confidence !== 'verified'
+    ? `<span class="water-tip-confidence">${w.confidence === 'likely' ? 'Likely — verify before trip' : 'Unverified — check before relying on it'}</span>`
+    : '';
+  return `
+    ${photo}
+    <div class="water-tip-body">
+      <div class="water-tip-name">${w.name}</div>
+      <div class="water-tip-desc">${w.description}</div>
+      <div class="water-tip-dist">${w.milesFromPrev} mi from ${w.nearPrevStop} &middot; ${w.milesFromNext} mi to ${w.nearNextStop}</div>
+      ${confidence}
+    </div>
+    <div class="water-tip-hint">Click for Google Maps link</div>
+  `;
+}
+
+function waterPopupHtml(w, imgUrl){
+  const photoTag = imgUrl ? `<img class="popup-photo" src="${imgUrl}" loading="lazy">` : '';
+  const confidenceNote = w.confidence && w.confidence !== 'verified'
+    ? `<div class="popup-dates">${w.confidence === 'likely' ? 'Likely real — verify before the trip' : 'Unverified — confirm on the ground before relying on it'}</div>`
+    : '';
+  const mapsUrl = `https://www.google.com/maps?q=${w.lat},${w.lng}`;
+  return `
+    ${photoTag}
+    <div class="popup-body">
+      <div class="popup-eyebrow">RV water fill &middot; not a trip stop</div>
+      <div class="popup-title water-popup-title">${w.name}</div>
+      <div class="popup-dates">${w.road}</div>
+      ${confidenceNote}
+      <div class="popup-activities-lbl">Details</div>
+      <ul class="popup-activities">
+        <li>${w.description}</li>
+        <li>${w.milesFromPrev} mi from ${w.nearPrevStop} &middot; ${w.milesFromNext} mi to ${w.nearNextStop}</li>
+      </ul>
+      <a class="water-popup-link" href="${mapsUrl}" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+    </div>
+  `;
+}
+
+waterStops.forEach(w => {
+  const marker = L.circleMarker([w.lat, w.lng], {
+    radius:6, weight:1.5, color:'#fff', fillColor:'#2E75B6', fillOpacity:0.95
+  });
+  marker.bindTooltip(waterTooltipHtml(w, null), {
+    className:'water-tooltip', direction:'top', offset:[0,-8]
+  });
+  marker.bindPopup(waterPopupHtml(w, null));
+  marker.addTo(waterLayer);
+  if(w.wiki){
+    loadStopImages(w.wiki).then(urls => {
+      if(!urls.length) return;
+      marker.setTooltipContent(waterTooltipHtml(w, urls[0]));
+      marker.setPopupContent(waterPopupHtml(w, urls[0]));
+    });
+  }
+});
+
+const waterToggle = document.getElementById('water-toggle');
+function setWaterVisible(visible){
+  waterVisible = visible;
+  waterToggle.classList.toggle('active', waterVisible);
+  waterToggle.setAttribute('aria-pressed', String(waterVisible));
+  waterToggle.querySelector('.sub').textContent = waterVisible ? 'click to hide' : 'click to show';
+  if(waterVisible){ waterLayer.addTo(map); } else { map.removeLayer(waterLayer); }
+}
+waterToggle.addEventListener('click', () => setWaterVisible(!waterVisible));
+waterToggle.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setWaterVisible(!waterVisible); }
+});
 
 const bounds = L.latLngBounds(latlngs);
 map.fitBounds(bounds, { padding:[40,40] });

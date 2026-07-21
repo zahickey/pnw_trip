@@ -74,7 +74,7 @@
 <header>
   <div class="title-block">
     <h1>San Diego → Alaska</h1>
-    <p>The long way up — Jul 20 to Aug 14, 2026</p>
+    <p>The long way up — Jul 22 to Aug 15, 2026</p>
   </div>
   <nav class="tabs">
     <a href="index.html">Map</a>
@@ -99,26 +99,24 @@
 <script>
 const rows = [
   { name:"San Diego, CA", time:"~2.5 hr", dist:"140 mi", activities:["Trip start — final gear check & packing", "Load the truck camper and hit the road"] },
-  { name:"Joshua Tree National Park", time:"~6 hr", dist:"320 mi", activities:["Bouldering & easy trad in Hidden Valley", "Sunset at Keys View", "Cholla Cactus Garden short walk"] },
-  { name:"Yosemite (Tuolumne Meadows)", time:"~3 hr", dist:"140 mi", activities:["Trad multi-pitch on granite domes", "Cathedral Peak", "Tenaya Lake swim", "High-country hikes"] },
-  { name:"South Lake Tahoe", time:"~1 hr", dist:"60 mi", activities:["Emerald Bay hike down to Vikingsholm", "Swim in the lake", "Easy rest day"] },
+  { name:"Joshua Tree National Park", time:"~6 hr", dist:"320 mi", activities:["Beginner top-rope day at Trashcan Rock — Loose Lady (5.6) and Double Cross (5.7)", "Hidden Valley Nature Trail (1 mi loop)", "Sunset hike up Ryan Mountain (3 mi RT)"] },
+  { name:"Yosemite (Tuolumne Meadows)", time:"~3 hr", dist:"140 mi", activities:["Day 1: top-rope fundamentals at Puppy Dome", "Day 2: first multi-pitch — Daff Dome's Bunny Slopes (5.6, 4 pitches)", "Day 3: Cathedral Peak SW Face (5.6) or the Cathedral Lakes hike (7 mi RT)", "Dog Lake hike from Lembert Dome trailhead"] },
+  { name:"South Lake Tahoe", time:"~1 hr", dist:"60 mi", activities:["Emerald Bay hike down to Vikingsholm (2 mi RT)", "Eagle Falls short hike", "Swim in the lake"] },
   { name:"Reno, NV", time:"~6.5 hr", dist:"350 mi", activities:["Quick coffee & resupply stop"] },
-  { name:"Crater Lake National Park", time:"~2.5 hr", dist:"130 mi", activities:["Rim Drive scenic loop", "Cleetwood Cove Trail (if open)", "Sunset at the rim"] },
-  { name:"Bend, OR (Smith Rock)", time:"~3 hr", dist:"160 mi", activities:["Sport climbing at Smith Rock", "Misery Ridge loop trail", "Views of the Crooked River gorge"] },
-  { name:"Portland, OR", time:"~3 hr", dist:"175 mi", activities:["Food carts", "Powell's Books", "Waterfront walk"] },
+  { name:"Crater Lake National Park", time:"~2.5 hr", dist:"130 mi", activities:["Rim Drive scenic loop", "Cleetwood Cove Trail (if open)", "Garfield Peak Trail (3.4 mi RT)", "Sunset at the rim"] },
+  { name:"Bend, OR (Smith Rock)", time:"~3 hr", dist:"160 mi", activities:["Sport climbing at Smith Rock", "Misery Ridge loop trail (3.7 mi)", "River Trail"] },
+  { name:"Portland, OR", time:"~3 hr", dist:"175 mi", activities:["Food carts", "Powell's Books", "Waterfront walk", "Multnomah Falls side trip"] },
   { name:"Seattle, WA", time:"~2 hr", dist:"90 mi", activities:["Pike Place Market", "Kerry Park skyline view", "Waterfront"] },
-  { name:"Mt. Rainier National Park", time:"~3.5 hr", dist:"170 mi", activities:["Skyline Trail loop", "Paradise wildflower meadows", "Reflection Lakes"] },
-  { name:"Olympic National Park", time:"~4.5 hr", dist:"230 mi", activities:["Hurricane Ridge", "Hoh Rainforest", "Coastal beach walk"] },
-  { name:"North Cascades National Park", time:"~5 hr", dist:"230 mi", activities:["Maple Pass / Cutthroat Pass hike", "Diablo Lake overlook"] },
-  { name:"Squamish, BC", time:"~5.5 hr", dist:"300 mi", activities:["Trad multi-pitch on the Stawamus Chief", "Hike to the top of the Chief", "Sea to Sky Gondola"] },
+  { name:"Mt. Rainier National Park", time:"~3.5 hr", dist:"170 mi", activities:["Skyline Trail loop (5.5 mi)", "Reflection Lakes", "Naches Peak Loop"] },
+  { name:"Olympic National Park", time:"~4.5 hr", dist:"230 mi", activities:["Hurricane Ridge + Hurricane Hill Trail (3.2 mi RT)", "Hoh Rainforest", "Rialto Beach to Hole-in-the-Wall"] },
+  { name:"North Cascades National Park", time:"~5 hr", dist:"230 mi", activities:["Maple Pass Loop (7.2 mi)", "Diablo Lake overlook"] },
+  { name:"Squamish, BC", time:"~5.5 hr", dist:"300 mi", activities:["Trad multi-pitch on the Stawamus Chief", "Hike to the top of the Chief", "Sea to Sky Gondola", "Shannon Falls"] },
   { name:"Kamloops, BC", time:"~5.5 hr", dist:"300 mi", activities:["Rest & resupply — halfway point to Banff"] },
-  { name:"Banff National Park", time:"~3.5 hr", dist:"180 mi", activities:["Lake Louise", "Moraine Lake", "Johnston Canyon hike"] },
-  { name:"Jasper National Park", time:"~4.5 hr", dist:"235 mi", activities:["Icefields Parkway stops", "Athabasca Glacier", "Maligne Lake", "Wildlife watching"] },
+  { name:"Banff National Park", time:"~3.5 hr", dist:"180 mi", activities:["Lake Louise + Plain of Six Glaciers teahouse hike", "Moraine Lake Rockpile", "Johnston Canyon to the Ink Pots"] },
+  { name:"Jasper National Park", time:"~4.5 hr", dist:"235 mi", activities:["Icefields Parkway — Peyto Lake, Bow Lake", "Athabasca Glacier", "Wilcox Pass Trail", "Maligne Canyon"] },
   { name:"Prince George, BC", time:"~4 hr", dist:"230 mi", activities:["Rest stop on the Yellowhead Highway"] },
   { name:"Smithers, BC", time:"~4 hr", dist:"200 mi", activities:["Rest stop", "Small mountain town, good coffee"] },
-  { name:"Hyder, AK", time:"~4.5 hr", dist:"225 mi", activities:["Drive to Salmon Glacier — largest road-accessible glacier in the world", "Fish Creek: watch grizzlies fishing for salmon", "Touch Alaska with zero ferry required"] },
-  { name:"Prince Rupert, BC", time:"~6 hr", dist:"Ferry crossing", activities:["Prep for the ferry", "Walk the harbor"] },
-  { name:"Ketchikan, AK", time:null, dist:null, activities:["Misty Fjords National Monument day trip", "Creek Street", "Tongass National Forest", "Trip end — arrange the ride home"] }
+  { name:"Hyder, AK", time:null, dist:null, activities:["Drive to Salmon Glacier — largest road-accessible glacier in the world", "Fish Creek: watch grizzlies fishing for salmon", "Touch Alaska with zero ferry required", "Trip end — relax and arrange the way home"] }
 ];
 
 const tbody = document.getElementById('itinerary-body');

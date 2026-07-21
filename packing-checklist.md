@@ -18,17 +18,16 @@
 ## Water
 - [ ] Gravity filtration system + spare filter
 - [ ] Yakima Road Shower — check water level before Squamish and before the Alaska Highway stretch (fewer services)
-- [ ] Extra water storage for the Dawson Creek–Prince Rupert stretch (long gaps between towns)
+- [ ] Extra water storage for the BC interior–Cassiar Highway stretch (long gaps between towns)
 
 ## Clothing / footwear
 - [ ] Trail runners — non-waterproof, neutral/cushioned, high-arch support
 - [ ] Warm layers for BC interior and coastal Alaska nights — expect it to be noticeably colder than the Sierra/PNW legs
-- [ ] Rain shell — Olympic NP and the Ketchikan/Prince Rupert coast both see regular rain even in August
-- [ ] Bear-aware food storage (canister or hang system) for Kluane-adjacent and Hyder-area camping
+- [ ] Rain shell — Olympic NP and the Hyder/Stewart coast both see regular rain even in August
+- [ ] Bear-aware food storage (canister or hang system) for the Hyder-area camping — Fish Creek is an active grizzly feeding spot
 
 ## Documents & logistics
-- [ ] Passport (multiple international border crossings: US↔Canada, twice)
+- [ ] Passport (multiple international border crossings: US↔Canada, and Canada↔US again into Hyder/Stewart)
 - [ ] Vehicle registration + insurance proof (valid in Canada)
-- [ ] AMHS Prince Rupert → Ketchikan ferry reservation confirmation — printed or offline-accessible
 - [ ] National park passes / reservations where required (Yosemite, Banff, Jasper day passes)
-- [ ] Offline maps downloaded for the BC interior and Alaska Highway corridor — cell service is sparse
+- [ ] Offline maps downloaded for the BC interior and Cassiar Highway corridor — cell service is sparse
